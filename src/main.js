@@ -11,8 +11,9 @@ import {
 import {
   Icon
 } from 'vant';
-import './style/index.less';
 import 'vant/lib/index.less';
+import './style/index.less';
+import './assets/fonts/iconfont.css'
 
 Vue.use(Button)
 Vue.use(NavBar)

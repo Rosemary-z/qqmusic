@@ -1,5 +1,13 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+    <SetCookie />
   </div>
 </template>
+<script>
+import SetCookie from "../components/SetCookie";
+export default {
+  components: {
+    SetCookie,
+  },
+};
+</script>

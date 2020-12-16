@@ -49,7 +49,12 @@
       </div>
       <div class="singer-chose-fa">
         <ul class="singer-chose">
-          <li class="singer-about-fa" v-for="(item, index) in singer_list" :key="index">
+          <li
+            class="singer-about-fa"
+            v-for="(item, index) in singer_list"
+            :key="index"
+            @click="jumpTo(item)"
+          >
             <div class="singer-about">
               <div class="singer-pic">
                 <img :src="item.singer_pic" alt="" />
@@ -87,11 +92,11 @@ export default {
     getSingerList().then((res) => {
       this.singer_list = res.data.data.list;
       this.hot_list = res.data.data.list;
-      console.log("singer_list", this.singer_list);
+      // console.log("singer_list", this.singer_list);
     });
     getSingerCategory().then((res) => {
       this.singer_category = res.data.data;
-      console.log("singer_category", this.singer_category);
+      // console.log("singer_category", this.singer_category);
     });
   },
   updated() {
@@ -99,7 +104,7 @@ export default {
     // console.log(this.$refs.wrapper1);
     // console.log(this.$refs.wrapper2_1[0]);
     let scroll1 = new BScroll(this.$refs.wrapper1, { scrollX: true });
-    let scroll2 = new BScroll(this.$refs.wrapper2_1[0], { scrollX: true });
+    // let scroll2 = new BScroll(this.$refs.wrapper2_1[0], { scrollX: true });
   },
   methods: {
     handleCategory(idx, index, id) {
@@ -107,13 +112,19 @@ export default {
       let idArr = this.idArr;
       numArr[idx] = index;
       idArr[idx] = id;
-      console.log("numArr", numArr);
-      console.log("idArr", idArr);
+      // console.log("numArr", numArr);
+      // console.log("idArr", idArr);
       this.numArr = [...numArr];
       this.idArr = [...idArr];
       getSingerList(idArr[0], idArr[1], idArr[3]).then((res) => {
         this.singer_list = res.data.data.list;
-        console.log("singer_list", this.singer_list);
+        // console.log("singer_list", this.singer_list);
+      });
+    },
+    jumpTo(item) {
+      this.$router.push({
+        name: "song",
+        params: item,
       });
     },
   },
@@ -121,7 +132,7 @@ export default {
 </script>
 
 <style lang="less">
-// @import "../style/index.less";
+@import "../style/index.less";
 body {
   background: #fafafa;
   .w(750);

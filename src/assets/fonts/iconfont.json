@@ -1,0 +1,44 @@
+{
+  "id": "2266938",
+  "name": "qqmusic",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1730211",
+      "name": "循环",
+      "font_class": "iconfontdanquxunhuan2eps",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "7905468",
+      "name": "下一曲",
+      "font_class": "xiayiqu",
+      "unicode": "e6cb",
+      "unicode_decimal": 59083
+    },
+    {
+      "icon_id": "7905469",
+      "name": "上一曲",
+      "font_class": "shangyiqu",
+      "unicode": "e6cc",
+      "unicode_decimal": 59084
+    },
+    {
+      "icon_id": "12669406",
+      "name": "暂停 停止",
+      "font_class": "zantingtingzhi",
+      "unicode": "e721",
+      "unicode_decimal": 59169
+    },
+    {
+      "icon_id": "17709779",
+      "name": "线性音乐菜单图标",
+      "font_class": "xianxingyinlecaidantubiao",
+      "unicode": "e64c",
+      "unicode_decimal": 58956
+    }
+  ]
+}

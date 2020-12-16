@@ -3,6 +3,8 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Singer from '@/views/Singer'
 import Song from '@/views/Song'
+import Player from '@/views/Player'
+import SetCookie from '@/components/SetCookie'
 
 Vue.use(VueRouter)
 
@@ -15,6 +17,16 @@ const routes = [{
     path: '/song',
     name: 'song',
     component: Song
+  },
+  {
+    path: '/setcookie',
+    name: 'setcookie',
+    component: SetCookie
+  },
+  {
+    path: '/player/:id',
+    name: 'player',
+    component: Player
   },
   {
     path: '/about',
