@@ -23,7 +23,7 @@
         class="song-img"
         :style="{ background: `url(${albumPic}) center center/cover` }"
       ></div>
-      <Lrc :songid="songid"></Lrc>
+      <Lrc :songid="songid" :seekTime="seekTime"></Lrc>
       <div class="play">
         <div
           class="progress"
@@ -42,12 +42,17 @@
         </div>
       </div>
       <div class="control-play">
-        <span class="iconfont repeat">&#xe600;</span>
+        <p class="play-model">
+          <span class="iconfont" :class="loopObj.icon" @click="changeLoop"></span>
+        </p>
         <span class="iconfont lastsong">&#xe6cc;</span>
         <p class="pause">
-          <span class="iconfont pause">&#xe721;</span>
+          <span
+            :class="`iconfont icon-${isPlay ? 'pause' : 'play'}`"
+            @click="handleplay"
+          ></span>
         </p>
-        <span class="iconfont nextsong">&#xe6cb;</span>
+        <span class="iconfont nextsong" @click="nextSong">&#xe6cb;</span>
         <span class="iconfont menu">&#xe64c;</span>
       </div>
     </div>
@@ -65,6 +70,7 @@ import { getSongUrl } from "@/api/singer.js";
 import { getAlbum } from "../api/singer";
 import Lrc from "../components/Lrc";
 import songs from "../utils/songs";
+import { mapMutations, mapGetters, mapState } from "vuex";
 export default {
   components: {
     Lrc,
@@ -83,6 +89,13 @@ export default {
     getCurrentSong() {
       return this.$store.state.getHotSongList.currentidx;
     },
+    ...mapGetters({
+      loopObj: "player/loopObj",
+    }),
+    ...mapState({
+      loop: (state) => state.player.loop,
+      songmid: (state) => state.player.songmid,
+    }),
   },
   watch: {
     start() {
@@ -94,6 +107,12 @@ export default {
       console.log("监听到了isPlay的状态", this.isPlay);
       let audio = this.$refs.audio;
       this.isPlay ? audio.play() : audio.pause();
+    },
+    songurl(newUrl, oldUrl) {
+      console.log("songurl已经发生了变化", newUrl);
+      if (newUrl) {
+        this.songurl = newUrl;
+      }
     },
   },
   data() {
@@ -107,31 +126,29 @@ export default {
       albummid: "",
       albumPic: "",
       songid: "",
+      seekTime: 0,
     };
   },
   created() {
-    // console.log("歌曲id", this.$route.params.id);
-    // console.log("songlist", this.getList);
-    // console.log("currentidx", this.getCurrentSong);
     this.albummid = this.getList[this.getCurrentSong].album.mid;
-    // this.songmid = this.getList[this.getCurrentSong].mid;
-    // console.log("songmid", this.songmid);
     let { id } = this.$route.params;
-    this.songurl = songs[id];
     this.songid = id;
-    console.log(this.songurl, this.songid);
-    // getSongUrl(id).then((res) => {
-    //   // console.log(res);
-    //   // console.log(res.data.data[id]);
-    //   this.songurl = res.data.data[id];
-    // });
+    getSongUrl(this.songid).then((res) => {
+      this.songurl = res.data.data[id];
+      console.log("点击之前的url", this.songurl);
+    });
     getAlbum(this.albummid).then((res) => {
       console.log("获取当前播放歌曲的专辑信息", res);
       this.albumPic = res.data.data.picUrl;
-      // console.log(this.albumPic);
     });
   },
   methods: {
+    ...mapMutations({
+      changeLoop: "player/changeLoop",
+    }),
+    // changeLoop() {
+    //   this.$store.commit("player/changeLoop", this.loop);
+    // },
     canPlay() {
       console.log("音乐可以播放了");
       let audio = this.$refs.audio;
@@ -139,6 +156,7 @@ export default {
       this.start = currentTime;
       this.end = duration;
       this.$store.commit("player/isPlayMut", true);
+      this.seekTime = this.start;
     },
     handleStart(e) {
       this.$store.commit("player/isPlayMut", false);
@@ -154,9 +172,9 @@ export default {
       this.percent = percent;
       if (distance > 0 && distance <= max) {
         this.$refs.progress_box.style.width = `${percent}%`;
+        this.start = (this.end * this.percent) / 100;
+        // this.seekTime = this.start;// 此处如果也为seektime赋值，会与上述赋值冲突，从而导致，歌词会写入两遍，有晃动的效果，暂未解决
       }
-      console.log(this.end, this.percent);
-      this.start = (this.end * this.percent) / 100;
     },
     handleEnd(e) {
       this.$store.commit("player/isPlayMut", true);
@@ -165,9 +183,24 @@ export default {
     },
     timeUpdate() {
       let audio = this.$refs.audio;
-      // console.log(audio.currentTime, audio.duration);
       let { currentTime, duration } = audio;
       this.start = currentTime;
+    },
+    handleplay() {
+      this.$store.commit("player/isPlayMut", !this.isPlay);
+    },
+    nextSong() {
+      this.$store.commit("getHotSongList/currentMut", this.getCurrentSong + 1);
+      this.albummid = this.getList[this.getCurrentSong].album.mid;
+      let { id } = this.$route.params;
+      this.songid = id;
+      getSongUrl(this.songid).then((res) => {
+        this.songurl = res.data.data[id];
+        console.log("点击之后的url", this.songurl);
+      });
+      getAlbum(this.albummid).then((res) => {
+        this.albumPic = res.data.data.picUrl;
+      });
     },
   },
   filters: {
@@ -196,10 +229,6 @@ body {
   .marg(44);
   .h(60);
   .center {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
     .fs(26);
     .w(236);
     .flex;
@@ -244,6 +273,7 @@ body {
   }
   .play {
     .progress {
+      width: 100%;
       .marg_t(54);
       .marg_b(24);
       position: relative;
@@ -251,6 +281,7 @@ body {
       border-radius: 3px;
       background: #999999;
       .progress-box {
+        max-width: 100%;
         height: 6px;
         position: absolute;
         top: 0;

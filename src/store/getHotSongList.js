@@ -12,6 +12,9 @@ export default {
         },
         getCurrentMut(state, currentsong) {
             state.currentidx = currentsong
+        },
+        currentMut(state, idx) {
+            state.currentidx = idx
         }
 
     }

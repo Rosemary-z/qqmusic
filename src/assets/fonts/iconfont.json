@@ -6,37 +6,156 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "18848232",
+      "name": "喜欢",
+      "font_class": "like",
+      "unicode": "e722",
+      "unicode_decimal": 59170
+    },
+    {
+      "icon_id": "14722",
+      "name": "云朵",
+      "font_class": "yunduo",
+      "unicode": "e661",
+      "unicode_decimal": 58977
+    },
+    {
+      "icon_id": "47665",
+      "name": "用户",
+      "font_class": "user",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
+      "icon_id": "3727061",
+      "name": "娱乐_音乐电台",
+      "font_class": "radio_station",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    },
+    {
+      "icon_id": "3968009",
+      "name": "已购",
+      "font_class": "has_buy",
+      "unicode": "e61f",
+      "unicode_decimal": 58911
+    },
+    {
+      "icon_id": "3997866",
+      "name": "视频",
+      "font_class": "video",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "4691065",
+      "name": "菜单",
+      "font_class": "menu",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "5651493",
+      "name": "排行",
+      "font_class": "paihang",
+      "unicode": "e605",
+      "unicode_decimal": 58885
+    },
+    {
+      "icon_id": "6819185",
+      "name": "单曲",
+      "font_class": "danqu",
+      "unicode": "e67b",
+      "unicode_decimal": 59003
+    },
+    {
+      "icon_id": "10823314",
+      "name": "搜索--1",
+      "font_class": "serch",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "12703048",
+      "name": "SongList 歌单",
+      "font_class": "songlist",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "14162340",
+      "name": "下载",
+      "font_class": "load",
+      "unicode": "e623",
+      "unicode_decimal": 58915
+    },
+    {
+      "icon_id": "15252690",
+      "name": "随机",
+      "font_class": "random",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "15425418",
+      "name": "live",
+      "font_class": "live",
+      "unicode": "e631",
+      "unicode_decimal": 58929
+    },
+    {
+      "icon_id": "15567753",
+      "name": "播放",
+      "font_class": "play",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "16140247",
+      "name": "音乐 copy",
+      "font_class": "music",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
+      "icon_id": "17386914",
+      "name": "分类",
+      "font_class": "fenlei",
+      "unicode": "e620",
+      "unicode_decimal": 58912
+    },
+    {
       "icon_id": "1730211",
       "name": "循环",
-      "font_class": "iconfontdanquxunhuan2eps",
+      "font_class": "loop",
       "unicode": "e600",
       "unicode_decimal": 58880
     },
     {
       "icon_id": "7905468",
       "name": "下一曲",
-      "font_class": "xiayiqu",
+      "font_class": "next",
       "unicode": "e6cb",
       "unicode_decimal": 59083
     },
     {
       "icon_id": "7905469",
       "name": "上一曲",
-      "font_class": "shangyiqu",
+      "font_class": "last",
       "unicode": "e6cc",
       "unicode_decimal": 59084
     },
     {
       "icon_id": "12669406",
       "name": "暂停 停止",
-      "font_class": "zantingtingzhi",
+      "font_class": "pause",
       "unicode": "e721",
       "unicode_decimal": 59169
     },
     {
       "icon_id": "17709779",
       "name": "线性音乐菜单图标",
-      "font_class": "xianxingyinlecaidantubiao",
+      "font_class": "music_menu",
       "unicode": "e64c",
       "unicode_decimal": 58956
     }

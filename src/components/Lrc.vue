@@ -13,15 +13,43 @@ export default {
       text: "暂无歌词",
     };
   },
-  props: ["songid"],
+  props: ["songid", "seekTime"],
+  computed: {
+    isPlay() {
+      return this.$store.state.player.isPlay;
+    },
+  },
+  watch: {
+    seekTime(newTime, oldTime) {
+      if (!this.lrcObj) {
+        return false;
+      }
+      this.lrcObj.seek(newTime * 1000);
+    },
+    isPlay(newPlay, oldPlay) {
+      console.log("歌词播放状态", newPlay);
+      if (!this.lrcObj) {
+        return false;
+      }
+      if (newPlay) {
+        this.lrcObj.play(this.seektime * 1000);
+      } else {
+        this.lrcObj.stop();
+      }
+    },
+  },
   mounted() {
     getLrc(this.songid).then((res) => {
-      console.log("lrc", res);
       let lrc = res.data.data.lyric;
+      // console.log(lrc);
+      if (this.lrcObj) {
+        this.lrcObj.stop();
+      }
       this.lrcObj = new Lyric(lrc, (obj) => {
         console.log(obj.txt);
         this.text = obj.txt;
       });
+      this.lrcObj.play();
     });
   },
 };
@@ -34,5 +62,6 @@ export default {
   color: #999999;
   .marg_b(50);
   .h(110);
+  .flex-center;
 }
 </style>

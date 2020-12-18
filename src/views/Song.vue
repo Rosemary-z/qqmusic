@@ -113,6 +113,7 @@
 <script>
 import request from "../utils/request";
 import { getSongs } from "../api/singer"; //这里的一定要加{}，不然会被当做是方法使用，报错
+import { mapMutations } from "vuex";
 export default {
   data() {
     return {
@@ -133,18 +134,23 @@ export default {
     // let { singer_mid, singer_name } = params;
     this.name = singer_name;
     this.mid = singer_mid;
-
     getSongs(this.mid).then((res) => {
       // console.log(res);
       this.songlist = res.data.data.list;
       console.log(this.songlist);
     });
   },
+  computed: {
+    ...mapState({
+      songmid: (state) => state.player.songmid,
+    }),
+  },
   methods: {
     jumpTo(songmid, index) {
-      this.$router.push(`/player/${songmid}`);
-      this.$store.commit("getHotSongList/getListMut", this.songlist);
-      this.$store.commit("getHotSongList/getCurrentMut", index);
+      this.$store.commit("player/changeSongmidMu", this.mid);
+      this.$router.push("/player/this.mid");
+      // this.$store.commit("getHotSongList/getListMut", this.songlist);
+      // this.$store.commit("getHotSongList/getCurrentMut", index);
     },
   },
 };
