@@ -6,12 +6,12 @@ export default {
             loop: 0,
             songmid: 0,
             loopData: [{
-                    title: '单曲循环',
-                    icon: 'icon-danqu'
-                },
-                {
                     title: '列表循环',
                     icon: 'icon-loop'
+                },
+                {
+                    title: '单曲循环',
+                    icon: 'icon-danqu'
                 },
                 {
                     title: '随机播放',

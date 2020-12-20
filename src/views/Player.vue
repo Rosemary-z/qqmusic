@@ -19,11 +19,8 @@
       </div>
     </div>
     <div class="content_box">
-      <div
-        class="song-img"
-        :style="{ background: `url(${albumPic}) center center/cover` }"
-      ></div>
-      <Lrc :songid="songid" :seekTime="seekTime"></Lrc>
+      <div class="song-img" :style="{ background: `url(${albumPic}) center center/cover` }"></div>
+      <Lrc :seekTime="seekTime"></Lrc>
       <div class="play">
         <div
           class="progress"
@@ -45,22 +42,21 @@
         <p class="play-model">
           <span class="iconfont" :class="loopObj.icon" @click="changeLoop"></span>
         </p>
-        <span class="iconfont lastsong">&#xe6cc;</span>
+        <span class="iconfont lastsong" @click="prevSong">&#xe6cc;</span>
         <p class="pause">
-          <span
-            :class="`iconfont icon-${isPlay ? 'pause' : 'play'}`"
-            @click="handleplay"
-          ></span>
+          <span :class="`iconfont icon-${isPlay ? 'pause' : 'play'}`" @click="handleplay"></span>
         </p>
         <span class="iconfont nextsong" @click="nextSong">&#xe6cb;</span>
         <span class="iconfont menu">&#xe64c;</span>
       </div>
     </div>
     <audio
-      :src="`${songurl}`"
+      :src="currentUrl"
       @canplay="canPlay"
       @timeupdate="timeUpdate"
       ref="audio"
+      autoplay
+      @ended="ended"
     ></audio>
   </div>
 </template>
@@ -73,7 +69,7 @@ import songs from "../utils/songs";
 import { mapMutations, mapGetters, mapState } from "vuex";
 export default {
   components: {
-    Lrc,
+    Lrc
   },
   // props: {
   //   start: { type: Number, default: 0 },
@@ -86,16 +82,17 @@ export default {
     getList() {
       return this.$store.state.getHotSongList.songlist;
     },
-    getCurrentSong() {
+    currentIdx() {
       return this.$store.state.getHotSongList.currentidx;
     },
     ...mapGetters({
-      loopObj: "player/loopObj",
+      loopObj: "player/loopObj"
     }),
     ...mapState({
-      loop: (state) => state.player.loop,
-      songmid: (state) => state.player.songmid,
-    }),
+      loop: state => state.player.loop,
+      songmid: state => state.player.songmid,
+      currentUrl: state => state.getHotSongList.currentUrl
+    })
   },
   watch: {
     start() {
@@ -108,12 +105,12 @@ export default {
       let audio = this.$refs.audio;
       this.isPlay ? audio.play() : audio.pause();
     },
-    songurl(newUrl, oldUrl) {
-      console.log("songurl已经发生了变化", newUrl);
+    currentUrl(newUrl, oldUrl) {
       if (newUrl) {
-        this.songurl = newUrl;
+        this.$store.commit("getHotSongList/getCurrentUrlMut", newUrl);
+        this.singid = this.songmid;
       }
-    },
+    }
   },
   data() {
     return {
@@ -125,26 +122,27 @@ export default {
       songlist: [],
       albummid: "",
       albumPic: "",
-      songid: "",
       seekTime: 0,
+      currentSongMsg: [],
+      currentSongMid: 0
     };
   },
   created() {
-    this.albummid = this.getList[this.getCurrentSong].album.mid;
-    let { id } = this.$route.params;
-    this.songid = id;
-    getSongUrl(this.songid).then((res) => {
-      this.songurl = res.data.data[id];
+    console.log("初次songmid", this.songmid);
+    this.albummid = this.getList[this.currentIdx].album.mid;
+    getSongUrl(this.songmid).then(res => {
+      this.songurl = res.data.data[this.songmid];
       console.log("点击之前的url", this.songurl);
+      this.$store.commit("getHotSongList/getCurrentUrlMut", this.songurl);
     });
-    getAlbum(this.albummid).then((res) => {
+    getAlbum(this.albummid).then(res => {
       console.log("获取当前播放歌曲的专辑信息", res);
       this.albumPic = res.data.data.picUrl;
     });
   },
   methods: {
     ...mapMutations({
-      changeLoop: "player/changeLoop",
+      changeLoop: "player/changeLoop"
     }),
     // changeLoop() {
     //   this.$store.commit("player/changeLoop", this.loop);
@@ -156,7 +154,7 @@ export default {
       this.start = currentTime;
       this.end = duration;
       this.$store.commit("player/isPlayMut", true);
-      this.seekTime = this.start;
+      this.seekTime = currentTime;
     },
     handleStart(e) {
       this.$store.commit("player/isPlayMut", false);
@@ -189,30 +187,78 @@ export default {
     handleplay() {
       this.$store.commit("player/isPlayMut", !this.isPlay);
     },
-    nextSong() {
-      this.$store.commit("getHotSongList/currentMut", this.getCurrentSong + 1);
-      this.albummid = this.getList[this.getCurrentSong].album.mid;
-      let { id } = this.$route.params;
-      this.songid = id;
-      getSongUrl(this.songid).then((res) => {
-        this.songurl = res.data.data[id];
+    nextPrev() {
+      console.log(this.isPlay);
+      console.log("nextsongmid", this.songmid);
+      this.currentSongMsg = this.getList[this.currentIdx];
+      console.log(this.currentIdx);
+      this.currentSongMid = this.currentSongMsg.mid;
+      this.$store.commit("player/changeSongmidMu", this.currentSongMid);
+      this.albummid = this.getList[this.currentIdx].album.mid;
+      getSongUrl(this.songmid).then(res => {
+        this.songurl = res.data.data[this.songmid];
         console.log("点击之后的url", this.songurl);
+        this.$store.commit("getHotSongList/getCurrentUrlMut", this.songurl);
+        console.log("状态机里面最新的songUrl", this.currentUrl);
       });
-      getAlbum(this.albummid).then((res) => {
+      getAlbum(this.albummid).then(res => {
         this.albumPic = res.data.data.picUrl;
       });
     },
+    nextSong() {
+      if (this.loop == 1) {
+        this.$store.commit("player/isPlayMut", false);
+        this.$store.commit("getHotSongList/currentMut", this.currentIdx);
+        this.sameNext();
+      }
+      if (this.loop == 0) {
+        if (this.currentIdx == 19) {
+          this.$store.commit("getHotSongList/currentMut", 0);
+        } else {
+          this.$store.commit("getHotSongList/currentMut", this.currentIdx + 1);
+        }
+        this.nextPrev();
+      }
+    },
+    prevSong() {
+      if (this.currentIdx == 0) {
+        this.$store.commit("getHotSongList/currentMut", 19);
+      } else {
+        this.$store.commit("getHotSongList/currentMut", this.currentIdx - 1);
+      }
+      this.nextPrev();
+    },
+    sameNext() {
+      let audio = this.$refs.audio;
+      this.percent = 0;
+      this.$refs.progress_box.style.width = `0%`;
+      this.start = (this.end * this.percent) / 100;
+      this.$store.commit("player/isPlayMut", true);
+      audio.play();
+    },
+    ended() {
+      console.log("播放结束");
+      let mid;
+      this.$store.commit("player/isPlayMut", false);
+      if (this.loop == 0) {
+        this.$store.commit("player/isPlayMut", true);
+        this.nextSong();
+      }
+      if (this.loop == 1) {
+        this.sameNext();
+      }
+    }
   },
   filters: {
-    filterTime: (value) => {
+    filterTime: value => {
       let time = parseInt(value);
       let m = parseInt(time / 60);
       let s = time % 60;
-      s = s < 9 ? `0${s}` : s;
-      m = m < 9 ? `0${m}` : m;
+      s = s < 10 ? `0${s}` : s;
+      m = m < 10 ? `0${m}` : m;
       return m + ":" + s;
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -267,7 +313,7 @@ body {
   .song-img {
     .w(630);
     .h(630);
-    background: url() left top 100% 100% / cover;
+    // background: url() left top 100% 100% / cover;
     border-radius: 8px;
     .marg_b(66);
   }

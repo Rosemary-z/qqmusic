@@ -24,7 +24,7 @@ const routes = [{
     component: SetCookie
   },
   {
-    path: '/player/:id',
+    path: '/player',
     name: 'player',
     component: Player
   },

@@ -8,9 +8,13 @@
       }"
     >
       <div class="singer-top">
-        <p><van-icon name="arrow-left" /></p>
         <p>
-          <span><van-icon name="share" /></span>
+          <van-icon name="arrow-left" />
+        </p>
+        <p>
+          <span>
+            <van-icon name="share" />
+          </span>
           <span>···</span>
         </p>
       </div>
@@ -37,7 +41,9 @@
       <div class="right">
         <p class="album-price">￥3.00</p>
         <p class="album-buy">
-          <span><van-icon name="shopping-cart-o" /></span>
+          <span>
+            <van-icon name="shopping-cart-o" />
+          </span>
           <span>购买</span>
         </p>
       </div>
@@ -66,7 +72,9 @@
     <!-- 全部播放、热门、菜单 -->
     <div class="wrapper-play">
       <p class="play-all">
-        <span><van-icon name="play-circle" /></span>
+        <span>
+          <van-icon name="play-circle" />
+        </span>
         <span>全部播放</span>
       </p>
       <p class="hot">
@@ -74,17 +82,15 @@
         <span>
           <van-icon name="arrow-down" />
         </span>
-        <span><van-icon name="bars" /></span>
+        <span>
+          <van-icon name="bars" />
+        </span>
       </p>
     </div>
     <!-- 歌曲列表 -->
     <div class="song-list">
       <ul>
-        <li
-          v-for="(item, index) in songlist"
-          :key="item.mid"
-          @click="jumpTo(item.mid, index)"
-        >
+        <li v-for="(item, index) in songlist" :key="item.mid" @click="jumpTo(item.mid, index)">
           <!-- <router-link :to="'/player/' + item.mid"> -->
           <div class="left">
             <p class="song-name">{{ item.name }}</p>
@@ -92,15 +98,19 @@
               <span>VIP</span>
               <span>SQ</span>
               <span>独家</span>
-              <span class="singer-name" v-for="itm in item.singer" :key="itm.mid">{{
+              <span class="singer-name" v-for="itm in item.singer" :key="itm.mid">
+                {{
                 itm.name
-              }}</span>
+                }}
+              </span>
               <span class="point">·</span>
               <span class="album-name">{{ item.album.name }}</span>
             </p>
           </div>
           <div class="right">
-            <span><van-icon name="play-circle" /></span>
+            <span>
+              <van-icon name="play-circle" />
+            </span>
             <span>···</span>
           </div>
           <!-- </router-link> -->
@@ -113,13 +123,13 @@
 <script>
 import request from "../utils/request";
 import { getSongs } from "../api/singer"; //这里的一定要加{}，不然会被当做是方法使用，报错
-import { mapMutations } from "vuex";
+import { mapMutations, mapState } from "vuex";
 export default {
   data() {
     return {
       name: "",
       mid: "",
-      songlist: [],
+      songlist: []
     };
   },
   created() {
@@ -129,12 +139,12 @@ export default {
       ? params
       : {
           singer_mid: "002J4UUk29y8BY",
-          singer_name: "薛之谦",
+          singer_name: "薛之谦"
         };
     // let { singer_mid, singer_name } = params;
     this.name = singer_name;
     this.mid = singer_mid;
-    getSongs(this.mid).then((res) => {
+    getSongs(this.mid).then(res => {
       // console.log(res);
       this.songlist = res.data.data.list;
       console.log(this.songlist);
@@ -142,17 +152,17 @@ export default {
   },
   computed: {
     ...mapState({
-      songmid: (state) => state.player.songmid,
-    }),
+      songmid: state => state.player.songmid
+    })
   },
   methods: {
     jumpTo(songmid, index) {
-      this.$store.commit("player/changeSongmidMu", this.mid);
-      this.$router.push("/player/this.mid");
-      // this.$store.commit("getHotSongList/getListMut", this.songlist);
-      // this.$store.commit("getHotSongList/getCurrentMut", index);
-    },
-  },
+      this.$router.push("/player");
+      this.$store.commit("player/changeSongmidMu", songmid);
+      this.$store.commit("getHotSongList/getListMut", this.songlist);
+      this.$store.commit("getHotSongList/getCurrentMut", index);
+    }
+  }
 };
 </script>
 
@@ -168,7 +178,7 @@ body {
     position: relative;
     .h(676);
     .singer-top {
-      .pad(30,30);
+      .pad(30, 30);
       .flex;
       .fs(40);
       color: #ffffff;
@@ -185,7 +195,7 @@ body {
     }
     .singer-bottom {
       width: 100%;
-      .pad(30,30);
+      .pad(30, 30);
       position: absolute;
       bottom: 30 / @remSize;
       .fs(23);
@@ -214,8 +224,8 @@ body {
     }
   }
   .album-msg {
-    .marg(20,30);
-    .pad(20,30);
+    .marg(20, 30);
+    .pad(20, 30);
     border-radius: 10px;
     .flex;
     background: #eef0f1;
@@ -254,7 +264,7 @@ body {
           }
         }
         &:nth-child(2) {
-          .pad(10,30);
+          .pad(10, 30);
           border-radius: 10px;
           .flex;
           .fs(30);
@@ -271,7 +281,7 @@ body {
   }
   .wrapper-box {
     ul {
-      .pad(40,60);
+      .pad(40, 60);
       .flex;
       .num {
         .fs(17);
@@ -283,7 +293,7 @@ body {
         }
       }
       li {
-        .pad(20,0);
+        .pad(20, 0);
         &:nth-child(1) {
           font-weight: bold;
           .song-title1 {
@@ -297,7 +307,7 @@ body {
     }
   }
   .wrapper-play {
-    .pad(30,30);
+    .pad(30, 30);
     .flex;
     .play-all {
       .fs(30);
@@ -331,9 +341,9 @@ body {
     }
   }
   .song-list {
-    .pad(20,30);
+    .pad(20, 30);
     li {
-      .pad(10,0);
+      .pad(10, 0);
       .flex;
       .left {
         color: #686868;

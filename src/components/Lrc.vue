@@ -1,7 +1,5 @@
 <template>
-  <div class="lrc">
-    {{ text }}
-  </div>
+  <div class="lrc">{{ text }}</div>
 </template>
 
 <script>
@@ -10,14 +8,17 @@ import Lyric from "lyric-parser";
 export default {
   data() {
     return {
-      text: "暂无歌词",
+      text: "暂无歌词"
     };
   },
-  props: ["songid", "seekTime"],
+  props: ["seekTime"],
   computed: {
     isPlay() {
       return this.$store.state.player.isPlay;
     },
+    songmid() {
+      return this.$store.state.player.songmid;
+    }
   },
   watch: {
     seekTime(newTime, oldTime) {
@@ -25,6 +26,11 @@ export default {
         return false;
       }
       this.lrcObj.seek(newTime * 1000);
+    },
+    songmid(newMid, oldMid) {
+      if (newMid) {
+        this.getNewLrc();
+      }
     },
     isPlay(newPlay, oldPlay) {
       console.log("歌词播放状态", newPlay);
@@ -36,22 +42,28 @@ export default {
       } else {
         this.lrcObj.stop();
       }
-    },
+    }
   },
   mounted() {
-    getLrc(this.songid).then((res) => {
-      let lrc = res.data.data.lyric;
-      // console.log(lrc);
-      if (this.lrcObj) {
-        this.lrcObj.stop();
-      }
-      this.lrcObj = new Lyric(lrc, (obj) => {
-        console.log(obj.txt);
-        this.text = obj.txt;
-      });
-      this.lrcObj.play();
-    });
+    console.log("当前组件已挂载");
+    this.getNewLrc();
   },
+  methods: {
+    getNewLrc() {
+      getLrc(this.songmid).then(res => {
+        let lrc = res.data.data.lyric;
+        // console.log(lrc);
+        if (this.lrcObj) {
+          this.lrcObj.stop();
+        }
+        this.lrcObj = new Lyric(lrc, obj => {
+          console.log(obj.txt);
+          this.text = obj.txt;
+        });
+        this.lrcObj.play();
+      });
+    }
+  }
 };
 </script>
 
