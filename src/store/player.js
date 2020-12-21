@@ -1,3 +1,7 @@
+import {
+    Toast
+} from "vant";
+
 export default {
     namespaced: true,
     state: () => {
@@ -35,6 +39,13 @@ export default {
             } else {
                 state.loop++;
             }
+            let {
+                title
+            } = state.loopData[state.loop]
+            Toast({
+                message: title,
+                icon: 'like-o'
+            })
         },
         changeSongmidMu(state, songmid) {
             state.songmid = songmid;

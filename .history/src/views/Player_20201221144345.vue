@@ -19,10 +19,7 @@
       </div>
     </div>
     <div class="content_box">
-      <div
-        class="song-img"
-        :style="{ background: `url(${albumPic}) center center/cover` }"
-      ></div>
+      <div class="song-img" :style="{ background: `url(${albumPic}) center center/cover` }"></div>
       <Lrc :seekTime="seekTime"></Lrc>
       <div class="play">
         <div
@@ -47,10 +44,7 @@
         </p>
         <span class="iconfont lastsong" @click="prevSong">&#xe6cc;</span>
         <p class="pause">
-          <span
-            :class="`iconfont icon-${isPlay ? 'pause' : 'play'}`"
-            @click="handleplay"
-          ></span>
+          <span :class="`iconfont icon-${isPlay ? 'pause' : 'play'}`" @click="handleplay"></span>
         </p>
         <span class="iconfont nextsong" @click="nextSong">&#xe6cb;</span>
         <span class="iconfont menu">&#xe64c;</span>
@@ -75,7 +69,7 @@ import songs from "../utils/songs";
 import { mapMutations, mapGetters, mapState } from "vuex";
 export default {
   components: {
-    Lrc,
+    Lrc
   },
   // props: {
   //   start: { type: Number, default: 0 },
@@ -92,13 +86,13 @@ export default {
       return this.$store.state.getHotSongList.currentidx;
     },
     ...mapGetters({
-      loopObj: "player/loopObj",
+      loopObj: "player/loopObj"
     }),
     ...mapState({
-      loop: (state) => state.player.loop,
-      songmid: (state) => state.player.songmid,
-      currentUrl: (state) => state.getHotSongList.currentUrl,
-    }),
+      loop: state => state.player.loop,
+      songmid: state => state.player.songmid,
+      currentUrl: state => state.getHotSongList.currentUrl
+    })
   },
   watch: {
     start() {
@@ -116,7 +110,7 @@ export default {
         this.$store.commit("getHotSongList/getCurrentUrlMut", newUrl);
         this.singid = this.songmid;
       }
-    },
+    }
   },
   data() {
     return {
@@ -130,25 +124,25 @@ export default {
       albumPic: "",
       seekTime: 0,
       currentSongMsg: [],
-      currentSongMid: 0,
+      currentSongMid: 0
     };
   },
   created() {
     console.log("初次songmid", this.songmid);
     this.albummid = this.getList[this.currentIdx].album.mid;
-    getSongUrl(this.songmid).then((res) => {
+    getSongUrl(this.songmid).then(res => {
       this.songurl = res.data.data[this.songmid];
       console.log("点击之前的url", this.songurl);
       this.$store.commit("getHotSongList/getCurrentUrlMut", this.songurl);
     });
-    getAlbum(this.albummid).then((res) => {
+    getAlbum(this.albummid).then(res => {
       console.log("获取当前播放歌曲的专辑信息", res);
       this.albumPic = res.data.data.picUrl;
     });
   },
   methods: {
     ...mapMutations({
-      changeLoop: "player/changeLoop",
+      changeLoop: "player/changeLoop"
     }),
     // changeLoop() {
     //   this.$store.commit("player/changeLoop", this.loop);
@@ -194,7 +188,6 @@ export default {
       this.$store.commit("player/isPlayMut", !this.isPlay);
     },
     nextPrev() {
-      // 当发生切换的时候，按照选择的不同的播放模式，重新更新状态机里的数据，发起请求，渲染页面。
       console.log(this.isPlay);
       console.log("nextsongmid", this.songmid);
       this.currentSongMsg = this.getList[this.currentIdx];
@@ -202,20 +195,19 @@ export default {
       this.currentSongMid = this.currentSongMsg.mid;
       this.$store.commit("player/changeSongmidMu", this.currentSongMid);
       this.albummid = this.getList[this.currentIdx].album.mid;
-      getSongUrl(this.songmid).then((res) => {
+      getSongUrl(this.songmid).then(res => {
         this.songurl = res.data.data[this.songmid];
         console.log("点击之后的url", this.songurl);
         this.$store.commit("getHotSongList/getCurrentUrlMut", this.songurl);
         console.log("状态机里面最新的songUrl", this.currentUrl);
       });
-      getAlbum(this.albummid).then((res) => {
+      getAlbum(this.albummid).then(res => {
         this.albumPic = res.data.data.picUrl;
       });
     },
     nextSong() {
-      this.$refs.audio.pause();
-      this.$store.commit("player/isPlayMut", false);
       if (this.loop == 1) {
+        this.$store.commit("player/isPlayMut", false);
         this.$store.commit("getHotSongList/currentMut", this.currentIdx);
         this.sameNext();
       }
@@ -227,43 +219,20 @@ export default {
         }
         this.nextPrev();
       }
-      if (this.loop == 2) {
-        let num = this.getList.length;
-        let randomIdx = Math.floor(Math.random() * num);
-        console.log(randomIdx);
-        this.$store.commit("getHotSongList/currentMut", randomIdx);
-        this.nextPrev();
-      }
     },
     prevSong() {
-      this.$refs.audio.pause();
-      this.$store.commit("player/isPlayMut", false);
-      if (this.loop == 0) {
-        if (this.currentIdx == 0) {
-          this.$store.commit("getHotSongList/currentMut", 19);
-        } else {
-          this.$store.commit("getHotSongList/currentMut", this.currentIdx - 1);
-        }
-        this.nextPrev();
+      if (this.currentIdx == 0) {
+        this.$store.commit("getHotSongList/currentMut", 19);
+      } else {
+        this.$store.commit("getHotSongList/currentMut", this.currentIdx - 1);
       }
-      if (this.loop == 1) {
-        this.$store.commit("getHotSongList/currentMut", this.currentIdx);
-        this.sameNext();
-      }
-      if (this.loop == 2) {
-        let num = this.getList.length;
-        let randomIdx = Math.floor(Math.random() * num);
-        console.log(randomIdx);
-        this.$store.commit("getHotSongList/currentMut", randomIdx);
-        this.nextPrev();
-      }
+      this.nextPrev();
     },
     sameNext() {
-      let { audio, progress_box } = this.$refs;
+      let audio = this.$refs.audio;
       this.percent = 0;
-      progress_box.style.width = `0%`;
+      this.$refs.progress_box.style.width = `0%`;
       this.start = (this.end * this.percent) / 100;
-      audio.currentTime = this.percent;
       this.$store.commit("player/isPlayMut", true);
       audio.play();
     },
@@ -278,20 +247,18 @@ export default {
       if (this.loop == 1) {
         this.sameNext();
       }
-      if (this.loop == 2) {
-      }
-    },
+    }
   },
   filters: {
-    filterTime: (value) => {
+    filterTime: value => {
       let time = parseInt(value);
       let m = parseInt(time / 60);
       let s = time % 60;
       s = s < 10 ? `0${s}` : s;
       m = m < 10 ? `0${m}` : m;
       return m + ":" + s;
-    },
-  },
+    }
+  }
 };
 </script>
 
